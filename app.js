@@ -4,14 +4,17 @@ const cors = require('cors')
 
 const contactsRouter = require('./routes/api/contacts')
 
+// Створюємо сервер
 const app = express()
 
 const formatsLogger = app.get('env') === 'development' ? 'dev' : 'short'
 
+// Створюємо middleware (проміжні обробники) для всіх запитів
 app.use(logger(formatsLogger))
 app.use(cors())
 app.use(express.json())
 
+// Створюємо middleware для конкретної групи запитів /api/contacts
 app.use('/api/contacts', contactsRouter)
 
 app.use((req, res) => {
