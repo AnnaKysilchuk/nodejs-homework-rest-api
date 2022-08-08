@@ -1,93 +1,34 @@
 const express = require('express');
-const Joi = require('joi');
 
-const contacts = require('../../models/contacts');
-const createError = require('../../helpers');
+const ctrl = require('../../controllers/contacts')
 
 
 const router = express.Router();
 
-const contactsAddSchema = Joi.object({
-  name: Joi.string().min(3).max(15).required(),
+// ----------------------- ОПРАЦЮВАННЯ ЗАПИТІВ
 
-  email: Joi.string().email({
-    minDomainSegments: 2,
-  }),
+// отримання всіх контактів
 
-  phone: Joi.string().required(),
-});
+router.get('/', ctrl.getAll);
 
-// Опрацювання запитів
-router.get('/', async (req, res, next) => {
-  try {
-    const result = await contacts.listContacts();
-    res.json(result);
-  }
-  catch (error) {
-    next(error);
-  }
-});
+// отримання контакту по id
 
-router.get('/:contactId', async (req, res, next) => {
-  try {
-    const { contactId } = req.params;
-    const result = await contacts.getContactById(contactId);
-    if (!result) {
-      throw createError(404);
-    }
-    res.json(result);
-  }
-  catch (error) {
-    next(error);
-  }
-});
+router.get('/:contactId', ctrl.getById);
 
-router.post('/', async (req, res, next) => {
-  try {
-    const { error } = contactsAddSchema.validate(req.body);
-    if (error) {
-      throw createError(400, error.message);
-    };
-    const result = await contacts.addContact(req.body);
-    res.status(201).json(result);
-  }
-  catch (error) {
-    next(error);
-  }
-});
+// створення контакту
 
-router.delete('/:contactId', async (req, res, next) => {
-  try {
-    const { contactId } = req.params;
-    const result = await contacts.removeContact(contactId, req.body);
-    if (!result) {
-      throw createError(404);
-    };
-    res.json({
-      message: "Contact deleted"
-    });
-  }
-  catch (error) {
-    next(error);
-  }
-});
+router.post('/', ctrl.add);
 
-router.put('/:contactId', async (req, res, next) => {
-  try {
-    const { error } = contactsAddSchema.validate(req.body);
-    if (error) {
-      throw createError(400, error.message);
-    };
-    const { contactId } = req.params;
-    const result = await contacts.updateContact(contactId, req.body);
-    if (!result) {
-      throw createError(404);
-    };
-    res.json(result);
-  }
-  catch (error) {
-    next(error);
-  }
-});
+// видалення контакту по id
+
+router.delete('/:contactId', ctrl.deleteById);
+
+// Онослення контакту по id
+
+router.put('/:contactId', ctrl.updateById);
+
+// Оновлення улюбленого контакту
+
+router.patch('/:contactId/favorite', ctrl.updateFavorite);
 
 module.exports = router;
