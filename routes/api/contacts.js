@@ -1,7 +1,8 @@
 const express = require('express');
 
-const ctrl = require('../../controllers/contacts')
+const { login } = require('../../middlewares');
 
+const ctrl = require('../../controllers/contacts');
 
 const router = express.Router();
 
@@ -9,26 +10,26 @@ const router = express.Router();
 
 // отримання всіх контактів
 
-router.get('/', ctrl.getAll);
+router.get('/', login, ctrl.getAll);
 
 // отримання контакту по id
 
-router.get('/:contactId', ctrl.getById);
+router.get('/:contactId', login, ctrl.getById);
 
 // створення контакту
 
-router.post('/', ctrl.add);
+router.post('/', login, ctrl.add);
 
 // видалення контакту по id
 
-router.delete('/:contactId', ctrl.deleteById);
+router.delete('/:contactId', login, ctrl.deleteById);
 
 // Онослення контакту по id
 
-router.put('/:contactId', ctrl.updateById);
+router.put('/:contactId', login, ctrl.updateById);
 
 // Оновлення улюбленого контакту
 
-router.patch('/:contactId/favorite', ctrl.updateFavorite);
+router.patch('/:contactId/favorite', login, ctrl.updateFavorite);
 
 module.exports = router;
