@@ -10,6 +10,12 @@ const router = express.Router();
 // реєстрація
 router.post("/signup", ctrl.signup);
 
+// верифікація
+router.get("/verify/:verificationToken", ctrl.verifyEmail);
+
+// повторне надсилання листа для верифікації
+router.post("/verify", ctrl.resendVerifyEmail);
+
 // вхід
 router.post("/login", ctrl.login);
 
